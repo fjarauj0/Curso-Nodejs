@@ -8,15 +8,19 @@ const response = require("../../network/response");
 console.log(chalk.bgBlue("--network--"));
 
 router.get("/", function (req, res) {
-  console.log(req.headers);
-  res.header({
-    "custom-header": "Nuestro valor personalizado",
-  });
-  response.success(req, res, "Lista de mensajes");
+  controller
+    .getMessages()
+    .then((messageList) => {
+      response.success(req, res, messageList, 200);
+    })
+    .catch((e) => {
+      response.error(req, res, "Error inesperado", 500, e);
+    });
 });
 
 router.post("/", function (req, res) {
-  controller.addMessage(req.body.user, req.body.message)
+  controller
+    .addMessage(req.body.user, req.body.message)
     .then((fullMessage) => {
       response.success(req, res, fullMessage, 201);
     })
