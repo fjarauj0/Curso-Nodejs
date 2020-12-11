@@ -1,3 +1,4 @@
+const chalk = require("chalk");
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -14,4 +15,4 @@ router(app);
 app.use("/app", express.static("public"));
 
 app.listen(3000);
-console.log("La aplicación esta escuchando en http://localhost:3000");
+console.log(chalk.yellow("La aplicación esta escuchando en http://localhost:3000"));

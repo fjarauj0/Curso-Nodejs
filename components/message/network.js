@@ -1,6 +1,11 @@
+const chalk = require("chalk");
+
 const express = require("express");
 const router = express.Router();
+const controller = require("./controller");
 const response = require("../../network/response");
+
+console.log(chalk.bgBlue("--network--"));
 
 router.get("/", function (req, res) {
   console.log(req.headers);
@@ -11,13 +16,13 @@ router.get("/", function (req, res) {
 });
 
 router.post("/", function (req, res) {
-  console.log(req.body);
-  console.log(req.query);
-  if (req.query.error == "ok") {
-    response.error(req, res, "Error simulado", 500, "Error simulado");
-  } else {
-    response.success(req, res, " Añadido correctamente", 201);
-  }
+  controller.addMessage(req.body.user, req.body.message)
+    .then((fullMessage) => {
+      response.success(req, res, fullMessage, 201);
+    })
+    .catch((e) => {
+      response.error(req, res, "Informacion invalida", 500, "Error simulado");
+    });
 });
 
 module.exports = router;
