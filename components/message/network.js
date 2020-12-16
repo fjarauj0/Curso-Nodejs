@@ -1,11 +1,23 @@
 const chalk = require("chalk");
 
 const express = require("express");
+const multer = require("multer");
 const router = express.Router();
 const controller = require("./controller");
 const response = require("../../network/response");
 
 console.log(chalk.bgBlue("--network messages--"));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/files/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
 
 router.get("/", function (req, res) {
   const filterMessages = req.query.user || null;
@@ -19,14 +31,22 @@ router.get("/", function (req, res) {
     });
 });
 
-router.post("/", function (req, res) {
+router.post("/", upload.single("file"), (req, res) => {
+  const { chat, user, message } = req.body;
   controller
-    .addMessage(req.body.chat, req.body.user, req.body.message)
+    .addMessage(chat, user, message, req.file)
     .then((fullMessage) => {
       response.success(req, res, fullMessage, 201);
     })
-    .catch((e) => {
-      response.error(req, res, "Informacion invalida", 500, "Error en el post mensaje", e);
+    .catch((err) => {
+      console.error(err);
+      response.error(
+        req,
+        res,
+        "Información invalida",
+        400,
+        "Error en el controlador"
+      );
     });
 });
 
