@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const router = require("./network/routes");
 const db = require("./db");
+const cors = require("cors");
 
 require("dotenv").config();
 
@@ -11,9 +12,10 @@ const PASS = process.env.DB_PASS;
 const DB_NAME = process.env.DB_NAME;
 
 const uri = `mongodb://${USER}:${PASS}@${DB_NAME}/<dbname>?ssl=true&replicaSet=atlas-6j83hy-shard-0&authSource=admin&retryWrites=true&w=majority`;
-db(uri)
+db(uri);
 
 var app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
