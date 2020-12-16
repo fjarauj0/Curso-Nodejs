@@ -5,7 +5,7 @@ const router = express.Router();
 const controller = require("./controller");
 const response = require("../../network/response");
 
-console.log(chalk.bgBlue("--network--"));
+console.log(chalk.bgBlue("--network messages--"));
 
 router.get("/", function (req, res) {
   const filterMessages = req.query.user || null;
@@ -21,12 +21,12 @@ router.get("/", function (req, res) {
 
 router.post("/", function (req, res) {
   controller
-    .addMessage(req.body.user, req.body.message)
+    .addMessage(req.body.chat, req.body.user, req.body.message)
     .then((fullMessage) => {
       response.success(req, res, fullMessage, 201);
     })
     .catch((e) => {
-      response.error(req, res, "Informacion invalida", 500, "Error simulado");
+      response.error(req, res, "Informacion invalida", 500, "Error en el post mensaje", e);
     });
 });
 
